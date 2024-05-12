@@ -10,7 +10,7 @@ func main() {
 
 	cfg := config.New()
 
-	fmt.Println(*cfg)
+	fmt.Printf("%+v\n", *cfg)
 
 	// logger - slog - import "log/slog"
 

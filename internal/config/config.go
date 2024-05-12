@@ -7,11 +7,11 @@ import (
 )
 
 type MyEnvConfig struct {
-	UserName     string `env:"USER_NAME"`
-	UserPassword string `env:"USER_PASSWORD"`
-	IsAdmin      bool   `env:"IS_ADMIN"`
-	UserId       int    `env:"USER_ID"`
-	UserRoles    []string
+	ENV                      string `env:"ENV"`
+	STORAGE_PATH             string `env:"STORAGE_PATH"`
+	HTTP_SERVER_ADDRESS      string `env:"HTTP_SERVER_ADDRESS"`
+	HTTP_SERVER_TIMEOUT      string `env:"HTTP_SERVER_TIMEOUT"`
+	HTTP_SERVER_IDLE_TIMEOUT string `env:"HTTP_SERVER_IDLE_TIMEOUT"`
 }
 
 type Config struct {
@@ -22,11 +22,11 @@ func New() *Config {
 
 	return &Config{
 		Config: MyEnvConfig{
-			UserName:     getEnv("USER_NAME", ""),
-			UserPassword: getEnv("USER_PASSWORD", ""),
-			IsAdmin:      getEnvAsBool("IS_ADMIN", false),
-			UserId:       getEnvAsInt("USER_ID", 0),
-			UserRoles:    getEnvAsSlice("USER_ROLES", []string{}, ","),
+			ENV:                      getEnv("ENV", ""),
+			STORAGE_PATH:             getEnv("STORAGE_PATH", "./storage.db"),
+			HTTP_SERVER_ADDRESS:      getEnv("HTTP_SERVER_ADDRESS", "localhost:8000"),
+			HTTP_SERVER_TIMEOUT:      getEnv("HTTP_SERVER_TIMEOUT", "10s"),
+			HTTP_SERVER_IDLE_TIMEOUT: getEnv("HTTP_SERVER_IDLE_TIMEOUT", "60s"),
 		},
 	}
 
