@@ -1,40 +1,78 @@
 package config
 
 import (
-	"log"
 	"os"
-	"time"
-
-	"github.com/ilyakaznacheev/cleanenv"
+	"strconv"
+	"strings"
 )
 
+type MyEnvConfig struct {
+	UserName     string `env:"USER_NAME"`
+	UserPassword string `env:"USER_PASSWORD"`
+	IsAdmin      bool   `env:"IS_ADMIN"`
+	UserId       int    `env:"USER_ID"`
+	UserRoles    []string
+}
+
 type Config struct {
-	Env         string `yaml: "env" env:"ENV" env-default:"local" env-required:"true"`
-	StoragePath string `yaml: "storage_path" env-required:"true"`
-	HTTPServer  `yaml: "http_server"`
+	Config MyEnvConfig
 }
 
-type HTTPServer struct {
-	Address     string        `yaml: "address" env-default:"localhost:8080"`
-	Timeout     time.Duration `yaml:"timeout" env-default:"4s"`
-	IdleTimeout time.Duration `yaml:"idle_timeout" env-default:"60s`
+func New() *Config {
+
+	return &Config{
+		Config: MyEnvConfig{
+			UserName:     getEnv("USER_NAME", ""),
+			UserPassword: getEnv("USER_PASSWORD", ""),
+			IsAdmin:      getEnvAsBool("IS_ADMIN", false),
+			UserId:       getEnvAsInt("USER_ID", 0),
+			UserRoles:    getEnvAsSlice("USER_ROLES", []string{}, ","),
+		},
+	}
+
 }
 
-func MustLoad() *Config {
-	configPath := os.Getenv("CONFIG_PATH")
-	if configPath == "" {
-		log.Fatal("CONFIG_PATH is not set")
+func getEnv(key string, defaultValue string) string {
+	val, exists := os.LookupEnv(key)
+
+	if !exists {
+		return defaultValue
 	}
 
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		log.Fatalf("config file does not exists: %s", configPath)
+	return val
+}
+
+func getEnvAsBool(key string, defaultValue bool) bool {
+
+	valStr := getEnv(key, "")
+
+	boolValue, err := strconv.ParseBool(valStr)
+
+	if err != nil {
+		return defaultValue
 	}
 
-	var cfg Config
+	return boolValue
+}
 
-	if err := cleanenv.ReadConfig(configPath, cfg); err != nil {
-		log.Fatalf("Cannot read config file: %s", err)
+func getEnvAsInt(key string, defaultValue int) int {
+	valStr := getEnv(key, "")
+
+	i, err := strconv.Atoi(valStr)
+
+	if err != nil {
+		return defaultValue
 	}
 
-	return &cfg
+	return i
+}
+
+func getEnvAsSlice(key string, defaultValue []string, sep string) []string {
+	valStr := getEnv(key, "")
+
+	if valStr == "" {
+		return defaultValue
+	}
+
+	return strings.Split(valStr, sep)
 }

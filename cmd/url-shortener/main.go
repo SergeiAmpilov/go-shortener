@@ -8,7 +8,7 @@ import (
 func main() {
 	// config - cleanenv
 
-	cfg := config.MustLoad()
+	cfg := config.New()
 
 	fmt.Println(*cfg)
 
