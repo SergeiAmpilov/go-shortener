@@ -1,10 +1,13 @@
 package config
 
 import (
+	"log"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 type MyEnvConfig struct {
@@ -19,11 +22,17 @@ type Config struct {
 	Config MyEnvConfig
 }
 
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("No .env file found")
+	}
+}
+
 func New() *Config {
 
 	return &Config{
 		Config: MyEnvConfig{
-			ENV:                      getEnv("ENV", ""),
+			ENV:                      getEnv("ENV", "local"),
 			STORAGE_PATH:             getEnv("STORAGE_PATH", "./storage.db"),
 			HTTP_SERVER_ADDRESS:      getEnv("HTTP_SERVER_ADDRESS", "localhost:8000"),
 			HTTP_SERVER_TIMEOUT:      getEnvAsTime("HTTP_SERVER_TIMEOUT", 10),
