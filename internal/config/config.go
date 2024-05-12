@@ -4,14 +4,15 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type MyEnvConfig struct {
-	ENV                      string `env:"ENV"`
-	STORAGE_PATH             string `env:"STORAGE_PATH"`
-	HTTP_SERVER_ADDRESS      string `env:"HTTP_SERVER_ADDRESS"`
-	HTTP_SERVER_TIMEOUT      string `env:"HTTP_SERVER_TIMEOUT"`
-	HTTP_SERVER_IDLE_TIMEOUT string `env:"HTTP_SERVER_IDLE_TIMEOUT"`
+	ENV                      string        `env:"ENV"`
+	STORAGE_PATH             string        `env:"STORAGE_PATH"`
+	HTTP_SERVER_ADDRESS      string        `env:"HTTP_SERVER_ADDRESS"`
+	HTTP_SERVER_TIMEOUT      time.Duration `env:"HTTP_SERVER_TIMEOUT"`
+	HTTP_SERVER_IDLE_TIMEOUT time.Duration `env:"HTTP_SERVER_IDLE_TIMEOUT"`
 }
 
 type Config struct {
@@ -25,8 +26,8 @@ func New() *Config {
 			ENV:                      getEnv("ENV", ""),
 			STORAGE_PATH:             getEnv("STORAGE_PATH", "./storage.db"),
 			HTTP_SERVER_ADDRESS:      getEnv("HTTP_SERVER_ADDRESS", "localhost:8000"),
-			HTTP_SERVER_TIMEOUT:      getEnv("HTTP_SERVER_TIMEOUT", "10s"),
-			HTTP_SERVER_IDLE_TIMEOUT: getEnv("HTTP_SERVER_IDLE_TIMEOUT", "60s"),
+			HTTP_SERVER_TIMEOUT:      getEnvAsTime("HTTP_SERVER_TIMEOUT", 10),
+			HTTP_SERVER_IDLE_TIMEOUT: getEnvAsTime("HTTP_SERVER_IDLE_TIMEOUT", 60),
 		},
 	}
 
@@ -75,4 +76,14 @@ func getEnvAsSlice(key string, defaultValue []string, sep string) []string {
 	}
 
 	return strings.Split(valStr, sep)
+}
+
+func getEnvAsTime(key string, defaultValue int) time.Duration {
+	valInt := getEnvAsInt(key, 0)
+
+	if valInt == 0 {
+		return time.Duration(defaultValue) * time.Second
+	}
+
+	return time.Duration(valInt) * time.Second
 }
