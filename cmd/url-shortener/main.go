@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"url-shortener/internal/config"
@@ -29,6 +30,16 @@ func main() {
 	}
 
 	_ = stor
+
+	resAdd, err := stor.SaveURL(
+		"https://www.youtube.com/watch?v=rCJvW2xgnk0&t=2633s",
+		"bit.ly/c/1234567891",
+	)
+	if err != nil {
+		log.Error("failed to add link", sl.Err(err))
+		os.Exit(1)
+	}
+	fmt.Println(resAdd)
 
 	// router - chi, chi render
 
