@@ -31,6 +31,15 @@ func main() {
 	_ = stor
 
 	/*
+
+		err = stor.DeleteURL("bit.ly/c/1234567891")
+
+		if err != nil {
+			log.Error("failed to delete url", sl.Err(err))
+		}
+		//////
+
+
 		resUrl, err := stor.GetURL("bit.ly/c/1234567891")
 		if err != nil {
 			fmt.Errorf("%w", err)
@@ -38,6 +47,7 @@ func main() {
 		}
 
 		fmt.Println(resUrl)
+		/////
 
 
 			resAdd, err := stor.SaveURL(
