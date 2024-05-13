@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"os"
 	"url-shortener/internal/config"
+	mwLogger "url-shortener/internal/http-server/middleware/logger"
 	"url-shortener/internal/lib/logger/sl"
 	"url-shortener/internal/storage/sqlite"
 	"url-shortener/logger"
@@ -40,7 +41,9 @@ func main() {
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
 	router.Use(middleware.Logger)
-
+	router.Use(mwLogger.New(log))
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.URLFormat)
 	/*
 
 		err = stor.DeleteURL("bit.ly/c/1234567891")
